@@ -15,38 +15,35 @@ pipeline {
         }
         
         stage('Three') {
-		    when{
-			     not{
-				 branch 'main'
-				 }
-			  }
+            when {
+                not {
+                    branch 'main'
+                }
+            }
             steps {
                 echo 'Hello.......'
-
             }
         }
-		
-		stage('Four') {
-                   parallel{
-				      stage('Unit Test'){
-					     steps{
-						 echo 'Running the Unit Test......'
-						 }
-					  }
-				     stage('Integration test'){
-					      agent{
-						       docker{
-							     reuseNode false
-								 image 'Ubuntu'
-							   }
-						  }
-						  steps{
-						     echo 'Running the Integration test........'
-						  }
-					 }
-				   }
+        
+        stage('Four') {
+            parallel {
+                stage('Unit Test') {
+                    steps {
+                        echo 'Running the Unit Test......'
+                    }
+                }
+                stage('Integration test') {
+                    agent {
+                        docker {
+                            image 'ubuntu'  // Note: use lowercase 'ubuntu' for the official image
+                            reuseNode true  // This ensures the container shares the workspace with the main node
+                        }
+                    }
+                    steps {
+                        echo 'Running the Integration test........'
+                    }
+                }
+            }
         }
-		
     }
-
 }
